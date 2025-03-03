@@ -1,24 +1,25 @@
-const http = require("http");
-const fs = require("fs");
-const url = require("url");
+const express = require("express");
+const app = express();
+const path = require('path');
 
-http
-	.createServer((req, res) => {
-		let q = url.parse(req.url, true);
-		let file = "." + q.pathname;
+const PORT = 8080;
 
-		fs.readFile(file, (err, data) => {
-			if (err) {
-				res.writeHead(404, { "content-type": "text/html" });
-				fs.readFile("404.html", (err, data) => {
-                    if (err) res.end("404 Page Not Found");
-					res.end(data);
-				});
-			} else {
-				res.writeHead(200, { "content-type": "text/html" });
-				res.write(data);
-				return res.end();
-			}
-		});
-	})
-	.listen(8080);
+app.get("/", (req, res) => {
+	res.sendFile(path.join(__dirname, "index.html"));
+});
+
+app.get("/contact", (req, res) => {
+	res.sendFile(path.join(__dirname, "contact-me.html"));
+});
+
+app.get("/about", (req, res) => {
+	res.sendFile(path.join(__dirname, "about.html"));
+});
+
+app.get("/*", (req, res) => {
+	res.sendFile(path.join(__dirname, "404.html"));
+});
+
+app.listen(PORT, (req, res) => {
+	console.log("Up and running on port " + PORT);
+});
